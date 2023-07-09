@@ -23,13 +23,11 @@ class MainActivity : AppCompatActivity() {
 
         artList = ArrayList<Art>()
 
-        //recyclerView initialize
         artAdapter = ArtAdapter(artList)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = artAdapter
 
 
-        //datalari ArtActivity'den alma
         try {
 
             val database = this.openOrCreateDatabase("Arts", MODE_PRIVATE, null)
@@ -56,8 +54,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
-    //Menu baglamaq
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         val menuInflater = menuInflater

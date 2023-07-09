@@ -25,7 +25,6 @@ class ArtAdapter(val artList : ArrayList<Art>) : RecyclerView.Adapter<ArtAdapter
     override fun onBindViewHolder(holder: ArtHolder, position: Int) {
         holder.binding.recyclerViewTextView.text = artList.get(position).name
 
-        //tiklama ile icindeki detallari gorme
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, ArtActivity::class.java)
             intent.putExtra("info", "old")

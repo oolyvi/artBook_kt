@@ -44,7 +44,6 @@ class ArtActivity : AppCompatActivity() {
         val intent = intent
         val info = intent.getStringExtra("info")
 
-        //art'in yeni ve ya kohne olmasini bilmesi
         if (info.equals("new")) {
 
             binding.artNameText.setText("")
@@ -82,9 +81,7 @@ class ArtActivity : AppCompatActivity() {
 
 
     fun save(view : View) {
-/*Database islerini burada edirik*/
 
-        //edit txtlerdeki inputlari almaq
         val artName = binding.artNameText.text.toString()
         val artistName = binding.artistNameText.text.toString()
         val year = binding.yearText.text.toString()
@@ -96,7 +93,6 @@ class ArtActivity : AppCompatActivity() {
             smallBitmap.compress(Bitmap.CompressFormat.PNG, 50, outputStream)
             val byteArray = outputStream.toByteArray()
 
-            //create db
             try {
 
                 database.execSQL("CREATE TABLE IF NOT EXISTS arts (id INTEGER PRIMARY KEY, artname VARCHAR, artistname VARCHAR, year VARCHAR, image BLOB)")
@@ -131,13 +127,11 @@ class ArtActivity : AppCompatActivity() {
         val bitmapRatio : Double = width.toDouble() / height.toDouble()
 
         if (bitmapRatio > 1) {
-            //landscape image = yatay gorsel
             width = maximumSize
             val scaledHeight = width / bitmapRatio
             height = scaledHeight.toInt()
 
         } else {
-            //portrait image = dikey gorsel
             height = maximumSize
             val scaledWidth = height * bitmapRatio
             width = scaledWidth.toInt()
@@ -150,56 +144,40 @@ class ArtActivity : AppCompatActivity() {
 
     fun selectImage(view : View) {
 
-        /*  ICAZE ISTEME  */
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            //android 33 ve sonrasi ucun icaze alma kontrolu -> READ_MEDIA_IMAGES
 
             if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
 
-                //icaze almaq mentiqini gosterirsen, yeni icazenin ne ucun lazim oldugunu SnackBar vasitesile   //rationale
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_MEDIA_IMAGES)) {
 
                     Snackbar.make(view, "Permission needed for gallery", Snackbar.LENGTH_INDEFINITE).setAction("Give Permission", View.OnClickListener {
-                        //snackbar ile icaze isteyirik tezeden
                         permissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
                     }).show()
 
                 } else {
-                    //request permission
                     permissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
                 }
 
             } else {
-
-                //icaze verilibse
-                //intent to gallery
                 val intentToGallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 activityResultLauncher.launch(intentToGallery)
             }
 
         } else {
-            //android 32 ve alti -> READ_EXTERNAL_STORAGE
-
             if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-                //icaze almaq mentiqini gosterirsen, yeni icazenin ne ucun lazim oldugunu SnackBar vasitesile   //rationale
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
                     Snackbar.make(view, "Permission needed for gallery", Snackbar.LENGTH_INDEFINITE).setAction("Give Permission", View.OnClickListener {
-                        //snackbar ile icaze isteyirik tezeden
                         permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     }).show()
 
                 } else {
-                    //request permission
                     permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                 }
 
             } else {
-
-                //icaze verilibse
-                //intent to gallery
                 val intentToGallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 activityResultLauncher.launch(intentToGallery)
             }
@@ -210,8 +188,6 @@ class ArtActivity : AppCompatActivity() {
 
 
     private fun registerLauncher() {
-
-        //bu resultLauncherlarin meqsedi odur ki harasa gedib oradan neylese qayidirlar. Meselen galleryden sekille
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 
             if (result.resultCode == RESULT_OK) {
@@ -219,7 +195,6 @@ class ArtActivity : AppCompatActivity() {
 
                 if (intentFromResult != null) {
                     val imageData = intentFromResult.data
-                    //binding.imageView.setImageURI(imageData)
 
                     if (imageData != null) {
 
@@ -244,16 +219,13 @@ class ArtActivity : AppCompatActivity() {
             }
         }
 
-        //permission launcher
         permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
 
             if (result) {
-                //icaze verildi
                 val intentToGallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 activityResultLauncher.launch(intentToGallery)
 
             } else {
-                //icaze verilmedi
                 Toast.makeText(this@ArtActivity, "Permission needed!", Toast.LENGTH_LONG).show()
             }
 
@@ -262,5 +234,3 @@ class ArtActivity : AppCompatActivity() {
     }
 
 }
-
-
